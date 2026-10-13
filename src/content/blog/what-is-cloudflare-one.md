@@ -3,7 +3,7 @@ title: What is Cloudflare One? A practical guide to the Zero Trust platform
 description: >-
   Understand Cloudflare One's SASE approach, its core access and traffic
   controls, and a measured way to introduce it in an organization.
-pubDate: 2026-11-05
+pubDate: 2026-10-12
 category: cloudflare
 format: How-to
 heroImage: /images/covers/what-is-cloudflare-one/heroImage.png
