@@ -11,6 +11,7 @@ seoTitle: What Is Cloudflare One? A Practical Guide
 seoDescription: >-
   Learn what Cloudflare One brings together, how it relates to Zero Trust, and
   how to plan a small first rollout.
+ogImage: /images/og/what-is-cloudflare-one/ogImage.png
 featured: false
 draft: false
 ---
