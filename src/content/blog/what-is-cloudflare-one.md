@@ -11,7 +11,7 @@ seoTitle: What Is Cloudflare One? A Practical Guide
 seoDescription: >-
   Learn what Cloudflare One brings together, how it relates to Zero Trust, and
   how to plan a small first rollout.
-featured: true
+featured: false
 draft: false
 ---
 Cloudflare One is Cloudflare's platform for connecting and securing users, devices, applications, and networks. Cloudflare describes it as an agile Secure Access Service Edge (SASE) platform. In practical terms, it brings together network connectivity and security services that can apply policies as traffic moves through Cloudflare's network.
