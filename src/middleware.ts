@@ -4,7 +4,7 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 // Defense in depth for the Keystatic admin. Cloudflare Access sits in front of the site, but the
 // *.workers.dev hostname can bypass an Access app bound to the custom domain, so the Worker also
 // verifies the Access JWT itself and fails closed when it is not configured.
-const ADMIN = /^\/(api\/)?keystatic(\/|$)/;
+const ADMIN = /^\/(?:keystatic(?:\/|$)|api\/keystatic(?:\/|$)|admin\/ai(?:\/|$)|api\/admin(?:\/|$))/;
 
 let jwks: ReturnType<typeof createRemoteJWKSet> | undefined;
 let jwksFor = "";

@@ -1,0 +1,464 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const prerender = false;
+---
+
+<BaseLayout title="AI writing desk" noindex description="Private AI writing tools for the site editor.">
+	<main class="container desk">
+		<header class="intro">
+			<div class="eyebrow">Private admin tool</div>
+			<h1>AI writing desk</h1>
+			<p>Draft an article, generate SEO metadata, or create a cover image. Review everything before adding it to Keystatic.</p>
+			<p class="notice">AI output can be inaccurate. Fact-check technical details, edit the draft, then copy it into Keystatic. Nothing is saved or published automatically.</p>
+		</header>
+
+		<section class="panel" aria-labelledby="draft-heading">
+			<div class="section-head">
+				<div>
+					<div class="eyebrow">Anthropic Claude</div>
+					<h2 id="draft-heading">Write an article draft</h2>
+				</div>
+			</div>
+			<form data-draft-form>
+				<label>Topic
+					<input name="topic" maxlength="300" required placeholder="For example, designing private networking across cloud providers" />
+				</label>
+				<div class="form-grid">
+					<label>Target audience
+						<input name="audience" maxlength="300" placeholder="Cloud architects, platform engineers..." />
+					</label>
+					<label>Category or context
+						<input name="category" maxlength="100" placeholder="AWS, Cloudflare, networking..." />
+					</label>
+				</div>
+				<label>Notes and points to cover
+					<textarea name="notes" maxlength="4000" rows="4" placeholder="Add your experience, examples, constraints, and any details the draft should include."></textarea>
+				</label>
+				<div class="actions">
+					<button class="btn" type="submit">Generate draft</button>
+					<span class="status" data-draft-status role="status" aria-live="polite"></span>
+				</div>
+			</form>
+			<div class="outputs" data-draft-output hidden>
+				<label>Suggested post title
+					<input data-output-title />
+				</label>
+				<label>Post description
+					<textarea data-output-description rows="2"></textarea>
+				</label>
+				<label>SEO meta title
+					<input data-output-seo-title maxlength="70" />
+				</label>
+				<div class="length" data-draft-seo-title-length></div>
+				<label>SEO meta description
+					<textarea data-output-seo-description maxlength="180" rows="2"></textarea>
+				</label>
+				<div class="length" data-draft-seo-description-length></div>
+				<label>Article draft (Markdown)
+					<textarea class="markdown" data-output-markdown rows="18"></textarea>
+				</label>
+				<div class="actions">
+					<button class="pill" type="button" data-copy-draft>Copy article Markdown</button>
+					<button class="pill" type="button" data-copy-metadata>Copy metadata</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="panel" aria-labelledby="seo-heading">
+			<div class="section-head">
+				<div>
+					<div class="eyebrow">Anthropic Claude</div>
+					<h2 id="seo-heading">Improve existing SEO metadata</h2>
+				</div>
+			</div>
+			<form data-seo-form>
+				<label>Current post title
+					<input name="title" maxlength="180" required placeholder="Paste the current title" />
+				</label>
+				<label>Article content
+					<textarea name="content" maxlength="30000" rows="8" required placeholder="Paste the article body or a representative excerpt (up to 30,000 characters)."></textarea>
+				</label>
+				<div class="actions">
+					<button class="btn" type="submit">Suggest SEO metadata</button>
+					<span class="status" data-seo-status role="status" aria-live="polite"></span>
+				</div>
+			</form>
+			<div class="outputs seo-output" data-seo-output hidden>
+				<label>Suggested meta title
+					<input data-seo-title />
+				</label>
+				<div class="length" data-seo-title-length></div>
+				<label>Suggested meta description
+					<textarea data-seo-description rows="3"></textarea>
+				</label>
+				<div class="length" data-seo-description-length></div>
+				<div class="actions">
+					<button class="pill" type="button" data-copy-seo>Copy SEO metadata</button>
+				</div>
+			</div>
+		</section>
+
+		<section class="panel" aria-labelledby="image-heading">
+			<div class="section-head">
+				<div>
+					<div class="eyebrow">OpenAI Images</div>
+					<h2 id="image-heading">Generate a cover image</h2>
+				</div>
+			</div>
+			<form data-image-form>
+				<label>Image concept
+					<textarea name="prompt" maxlength="2000" rows="4" required placeholder="Describe the architecture, objects, palette, and mood. Avoid asking for text in the image."></textarea>
+				</label>
+				<div class="actions">
+					<button class="btn" type="submit">Generate image</button>
+					<span class="status" data-image-status role="status" aria-live="polite"></span>
+				</div>
+			</form>
+			<div class="image-output" data-image-output hidden>
+				<img data-generated-image alt="AI-generated blog cover preview" />
+				<div class="actions">
+					<a class="btn" data-download-image download="cloud-cover.png">Download PNG</a>
+					<span class="helper">Download, then upload it in the post's Cover image field in Keystatic.</span>
+				</div>
+			</div>
+		</section>
+
+		<a class="back" href="/keystatic">Open Keystatic to add or publish content →</a>
+	</main>
+</BaseLayout>
+
+<style>
+	.desk {
+		max-width: 880px;
+		padding-top: 56px;
+		padding-bottom: 88px;
+	}
+	.intro {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		margin-bottom: 36px;
+	}
+	h1 {
+		font-size: clamp(34px, 5vw, 52px);
+		line-height: 1.05;
+		letter-spacing: -0.03em;
+	}
+	.intro p {
+		max-width: 65ch;
+		margin: 0;
+		color: var(--muted);
+	}
+	.notice,
+	.helper {
+		font-size: 14px;
+	}
+	.notice {
+		padding: 12px 16px;
+		border-left: 3px solid var(--accent);
+		background: var(--surface);
+	}
+	.panel {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		margin: 28px 0;
+		padding: 24px;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background: var(--bg);
+	}
+	.section-head h2 {
+		margin-top: 6px;
+		font-size: 24px;
+	}
+	form,
+	.outputs {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+	.outputs[hidden],
+	.image-output[hidden] {
+		display: none;
+	}
+	label {
+		display: flex;
+		flex-direction: column;
+		gap: 7px;
+		font-size: 14px;
+		font-weight: 500;
+	}
+	input,
+	textarea {
+		width: 100%;
+		padding: 11px 13px;
+		border: 1px solid var(--line);
+		border-radius: 9px;
+		background: var(--bg);
+		color: var(--fg);
+		font: inherit;
+		font-size: 15px;
+		font-weight: 400;
+	}
+	textarea {
+		resize: vertical;
+		line-height: 1.55;
+	}
+	input:focus,
+	textarea:focus {
+		outline: 2px solid var(--accent);
+		outline-offset: 1px;
+	}
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+	}
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+	}
+	.btn,
+	.pill {
+		justify-content: center;
+	}
+	button:disabled {
+		cursor: wait;
+		opacity: 0.6;
+	}
+	.status,
+	.length {
+		color: var(--muted);
+		font-size: 14px;
+	}
+	.status[data-error="true"] {
+		color: #c0392b;
+	}
+	.markdown {
+		font-family: var(--mono);
+		font-size: 13px;
+	}
+	.image-output {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+	.image-output img {
+		width: 100%;
+		max-height: 480px;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		object-fit: contain;
+		background: var(--surface);
+	}
+	.helper {
+		color: var(--muted);
+	}
+	.back {
+		display: inline-block;
+		margin-top: 12px;
+	}
+	@media (max-width: 600px) {
+		.desk {
+			padding-top: 36px;
+			padding-bottom: 64px;
+		}
+		.panel {
+			padding: 18px;
+		}
+		.form-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
+
+<script>
+	type WritingResult = {
+		title: string;
+		description: string;
+		seoTitle: string;
+		seoDescription: string;
+		markdown: string;
+	};
+
+	async function postJson<T>(path: string, body: Record<string, string>): Promise<T> {
+		const response = await fetch(path, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(body),
+		});
+		let result: T & { error?: string };
+		try {
+			result = (await response.json()) as T & { error?: string };
+		} catch {
+			throw new Error("invalid_response");
+		}
+		if (!response.ok) throw new Error(result.error ?? `Request failed (${response.status})`);
+		return result;
+	}
+
+	function setStatus(element: HTMLElement, message: string, error = false) {
+		element.textContent = message;
+		element.dataset.error = String(error);
+	}
+
+	async function withBusy<T>(form: HTMLFormElement, status: HTMLElement, run: () => Promise<T>, done: (result: T) => void) {
+		const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+		button.disabled = true;
+		setStatus(status, "Working…");
+		try {
+			const result = await run();
+			done(result);
+			setStatus(status, "Done. Review the result before using it.");
+		} catch (error) {
+			const message = error instanceof Error ? error.message : "Unexpected error";
+			const messages: Record<string, string> = {
+				anthropic_not_configured: "Anthropic is not configured. Add ANTHROPIC_API_KEY to the Worker secrets.",
+				openai_not_configured: "OpenAI is not configured. Add OPENAI_API_KEY to the Worker secrets.",
+				provider_rate_limited: "The AI provider is rate limiting requests. Wait a moment and try again.",
+				provider_unavailable: "Could not reach the AI provider. Try again shortly.",
+				provider_error: "The AI provider rejected the request. Check its API account and configuration.",
+				invalid_provider_response: "The AI provider returned an unexpected response.",
+				invalid_response: "The server returned an invalid response.",
+				request_too_large: "The request is too long. Shorten the supplied content and try again.",
+				input_too_long: "One or more fields exceed their character limits.",
+			};
+			setStatus(status, messages[message] ?? message, true);
+		} finally {
+			button.disabled = false;
+		}
+	}
+
+	const draftForm = document.querySelector<HTMLFormElement>("[data-draft-form]")!;
+	const draftStatus = document.querySelector<HTMLElement>("[data-draft-status]")!;
+	const draftOutput = document.querySelector<HTMLElement>("[data-draft-output]")!;
+	const outputTitle = document.querySelector<HTMLInputElement>("[data-output-title]")!;
+	const outputDescription = document.querySelector<HTMLTextAreaElement>("[data-output-description]")!;
+	const outputSeoTitle = document.querySelector<HTMLInputElement>("[data-output-seo-title]")!;
+	const outputSeoDescription = document.querySelector<HTMLTextAreaElement>("[data-output-seo-description]")!;
+	const outputMarkdown = document.querySelector<HTMLTextAreaElement>("[data-output-markdown]")!;
+	const draftSeoTitleLength = document.querySelector<HTMLElement>("[data-draft-seo-title-length]")!;
+	const draftSeoDescriptionLength = document.querySelector<HTMLElement>("[data-draft-seo-description-length]")!;
+	const updateDraftSeoLengths = () => {
+		draftSeoTitleLength.textContent = `${outputSeoTitle.value.length} characters (recommended: 50–60)`;
+		draftSeoDescriptionLength.textContent = `${outputSeoDescription.value.length} characters (recommended: 140–160)`;
+	};
+	outputSeoTitle.addEventListener("input", updateDraftSeoLengths);
+	outputSeoDescription.addEventListener("input", updateDraftSeoLengths);
+
+	draftForm.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const form = new FormData(draftForm);
+		await withBusy(
+			draftForm,
+			draftStatus,
+			() => postJson<{ result: WritingResult }>("/api/admin/writing", {
+				mode: "draft",
+				topic: String(form.get("topic") ?? ""),
+				audience: String(form.get("audience") ?? ""),
+				category: String(form.get("category") ?? ""),
+				notes: String(form.get("notes") ?? ""),
+			}),
+			({ result }) => {
+				outputTitle.value = result.title;
+				outputDescription.value = result.description;
+				outputSeoTitle.value = result.seoTitle;
+				outputSeoDescription.value = result.seoDescription;
+				outputMarkdown.value = result.markdown;
+				draftOutput.hidden = false;
+				updateDraftSeoLengths();
+			},
+		);
+	});
+
+	const seoForm = document.querySelector<HTMLFormElement>("[data-seo-form]")!;
+	const seoStatus = document.querySelector<HTMLElement>("[data-seo-status]")!;
+	const seoOutput = document.querySelector<HTMLElement>("[data-seo-output]")!;
+	const seoTitle = document.querySelector<HTMLInputElement>("[data-seo-title]")!;
+	const seoDescription = document.querySelector<HTMLTextAreaElement>("[data-seo-description]")!;
+	const seoTitleLength = document.querySelector<HTMLElement>("[data-seo-title-length]")!;
+	const seoDescriptionLength = document.querySelector<HTMLElement>("[data-seo-description-length]")!;
+
+	const updateSeoLengths = () => {
+		seoTitleLength.textContent = `${seoTitle.value.length} characters (recommended: 50–60)`;
+		seoDescriptionLength.textContent = `${seoDescription.value.length} characters (recommended: 140–160)`;
+	};
+	seoTitle.addEventListener("input", updateSeoLengths);
+	seoDescription.addEventListener("input", updateSeoLengths);
+
+	seoForm.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const form = new FormData(seoForm);
+		await withBusy(
+			seoForm,
+			seoStatus,
+			() => postJson<{ result: WritingResult }>("/api/admin/writing", {
+				mode: "seo",
+				title: String(form.get("title") ?? ""),
+				content: String(form.get("content") ?? ""),
+			}),
+			({ result }) => {
+				seoTitle.value = result.seoTitle;
+				seoDescription.value = result.seoDescription;
+				seoOutput.hidden = false;
+				updateSeoLengths();
+			},
+		);
+	});
+
+	async function copyText(value: string, status: HTMLElement, successMessage: string) {
+		try {
+			await navigator.clipboard.writeText(value);
+			setStatus(status, successMessage);
+		} catch {
+			setStatus(status, "Clipboard access failed. Select and copy the text manually.", true);
+		}
+	}
+
+	document.querySelector<HTMLButtonElement>("[data-copy-draft]")!.addEventListener("click", () => {
+		void copyText(outputMarkdown.value, draftStatus, "Article Markdown copied.");
+	});
+	document.querySelector<HTMLButtonElement>("[data-copy-metadata]")!.addEventListener("click", () => {
+		void copyText(
+			`Title: ${outputTitle.value}\nDescription: ${outputDescription.value}\nSEO title: ${outputSeoTitle.value}\nSEO description: ${outputSeoDescription.value}`,
+			draftStatus,
+			"Title and SEO metadata copied.",
+		);
+	});
+	document.querySelector<HTMLButtonElement>("[data-copy-seo]")!.addEventListener("click", () => {
+		void copyText(`SEO title: ${seoTitle.value}\nSEO description: ${seoDescription.value}`, seoStatus, "SEO metadata copied.");
+	});
+
+	const imageForm = document.querySelector<HTMLFormElement>("[data-image-form]")!;
+	const imageStatus = document.querySelector<HTMLElement>("[data-image-status]")!;
+	const imageOutput = document.querySelector<HTMLElement>("[data-image-output]")!;
+	const generatedImage = document.querySelector<HTMLImageElement>("[data-generated-image]")!;
+	const downloadImage = document.querySelector<HTMLAnchorElement>("[data-download-image]")!;
+	let imageUrl: string | undefined;
+
+	imageForm.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const prompt = String(new FormData(imageForm).get("prompt") ?? "");
+		await withBusy(
+			imageForm,
+			imageStatus,
+			() => postJson<{ image: string; mimeType: string }>("/api/admin/image", { prompt }),
+			({ image, mimeType }) => {
+				if (imageUrl) URL.revokeObjectURL(imageUrl);
+				const bytes = Uint8Array.from(atob(image), (character) => character.charCodeAt(0));
+				imageUrl = URL.createObjectURL(new Blob([bytes], { type: mimeType }));
+				generatedImage.src = imageUrl;
+				downloadImage.href = imageUrl;
+				imageOutput.hidden = false;
+			},
+		);
+	});
+
+	window.addEventListener("pagehide", () => {
+		if (imageUrl) URL.revokeObjectURL(imageUrl);
+	});
+</script>
