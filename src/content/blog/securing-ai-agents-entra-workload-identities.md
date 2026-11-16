@@ -1,12 +1,20 @@
 ---
-title: "Securing AI agents with Entra workload identities and managed identity"
-description: "Give every agent its own identity, scope its permissions to the tools it calls, and audit what it did. A working setup on Azure with deployable Bicep and Python."
+title: Securing AI agents with Entra workload identities and managed identity
+description: >-
+  Give every agent its own identity, scope its permissions to the tools it
+  calls, and audit what it did. A working setup on Azure with deployable Bicep
+  and Python.
 pubDate: 2026-11-15
 category: security
-format: "How-to"
-seoTitle: "Securing AI agents on Azure: managed identity, workload identity federation, and least-privilege RBAC"
-seoDescription: "A hands-on guide to AI agent identity on Azure: one managed identity per agent, data-plane RBAC scoped to each tool, federated credentials instead of secrets, Conditional Access for workload identities, and the sign-in logs that show what an agent actually did."
-featured: false
+format: How-to
+heroImage: /images/covers/securing-ai-agents-entra-workload-identities/heroImage.jpeg
+seoTitle: 'Securing AI agents on Azure: managed identity, workload federation'
+seoDescription: >-
+  A hands-on guide to AI agent identity on Azure: one managed identity per
+  agent, data-plane RBAC scoped to each tool, federated credentials instead of
+  secrets, 
+ogImage: /images/og/securing-ai-agents-entra-workload-identities/ogImage.jpeg
+featured: true
 draft: false
 ---
 Most AI agents in production today run as someone else. They run as the developer who built them, as a shared service principal named `ai-platform-prod`, or as an app registration whose client secret lives in three places, one of them a Teams chat. The agent works, the demo goes well, and nobody can answer the question a security reviewer asks first: *if this agent misbehaves, what can it touch?*
@@ -25,7 +33,7 @@ A shared identity fails in three ways, and each gets worse as you add agents.
 
 The rule is simple: **one agent, one identity.** "Agent" here means a deployable unit with a distinct purpose and toolset, not every instance. Ten replicas of the HR assistant share one identity; the HR assistant and the finance agent never do.
 
-![Before and after: three agents sharing one service principal with access to everything, versus one managed identity per agent scoped to its own tools](/images/posts/securing-ai-agents-entra-workload-identities/01-shared-vs-per-agent.png)
+!\[Before and after: three agents sharing one service principal with access to everything, versus one managed identity per agent scoped to its own tools]\(/images/posts/securing-ai-agents-entra-workload-identities/01-shared-vs-per-agent.png)
 
 ## Managed identity vs workload identity federation
 
@@ -37,12 +45,12 @@ Azure gives you two ways to give an agent an identity without a secret. Which on
 
 Here is the useful detail: **you can add federated credentials to a user-assigned managed identity.** So one identity per agent works everywhere. The production agent on Container Apps uses the identity directly, and the agent's evaluation pipeline in GitHub Actions uses the *same* identity through federation, with the same permissions and the same entry in the logs.
 
-| Where the agent runs | Use | Secret to manage |
-|---|---|---|
-| Container Apps, App Service, Functions, VMs | User-assigned managed identity | None |
-| AKS | Managed identity + AKS workload identity (federation) | None |
-| GitHub Actions, other clouds, on-premises Kubernetes | Federated credential on the managed identity | None |
-| A SaaS platform that only accepts a client secret | App registration + secret in Key Vault (last resort) | Yes. Rotate it and alert on it |
+| Where the agent runs                                 | Use                                                   | Secret to manage               |
+| ---------------------------------------------------- | ----------------------------------------------------- | ------------------------------ |
+| Container Apps, App Service, Functions, VMs          | User-assigned managed identity                        | None                           |
+| AKS                                                  | Managed identity + AKS workload identity (federation) | None                           |
+| GitHub Actions, other clouds, on-premises Kubernetes | Federated credential on the managed identity          | None                           |
+| A SaaS platform that only accepts a client secret    | App registration + secret in Key Vault (last resort)  | Yes. Rotate it and alert on it |
 
 If you're reaching for a client secret, check the table again. It belongs in the last row only.
 
@@ -88,9 +96,9 @@ output identities array = [for (a, i) in agents: {
 
 Pin the federated `subject` as tightly as you can. `repo:contoso/hr-assistant:environment:production` means only workflow jobs that target the `production` environment in that repository can become the agent, and you can protect that environment with required reviewers. A subject like `repo:contoso/hr-assistant:ref:refs/heads/main` is looser: any workflow on `main` qualifies.
 
-![Illustration: Two user-assigned managed identities, one per agent, tagged with agent name and owner](/images/posts/securing-ai-agents-entra-workload-identities/02-identities.webp)
+!\[Illustration: Two user-assigned managed identities, one per agent, tagged with agent name and owner]\(/images/posts/securing-ai-agents-entra-workload-identities/02-identities.webp)
 
-![Illustration: The federated credential on the HR assistant identity, trusting only the production environment of its own repository](/images/posts/securing-ai-agents-entra-workload-identities/03-federated-credential.webp)
+!\[Illustration: The federated credential on the HR assistant identity, trusting only the production environment of its own repository]\(/images/posts/securing-ai-agents-entra-workload-identities/03-federated-credential.webp)
 
 ### Use the identity from the agent
 
@@ -126,13 +134,13 @@ In GitHub Actions, `azure/login` with `client-id` set to the same identity's cli
 
 An agent's tools are its permissions. Write them down as a table before you write any role assignments: each tool, the resource it touches, and the narrowest built-in role that lets it work.
 
-| Agent | Tool | Resource | Role | Scope |
-|---|---|---|---|---|
-| hr-assistant | Answer generation | Azure OpenAI account | Cognitive Services OpenAI User | That account |
-| hr-assistant | Policy search | AI Search | Search Index Data Reader | That search service |
-| hr-assistant | Read attached policy PDFs | Storage | Storage Blob Data Reader | The `hr-policies` **container** |
-| finance-agent | Answer generation | Azure OpenAI account | Cognitive Services OpenAI User | That account |
-| finance-agent | Invoice lookup | Storage | Storage Blob Data Reader | The `invoices` container |
+| Agent         | Tool                      | Resource             | Role                           | Scope                           |
+| ------------- | ------------------------- | -------------------- | ------------------------------ | ------------------------------- |
+| hr-assistant  | Answer generation         | Azure OpenAI account | Cognitive Services OpenAI User | That account                    |
+| hr-assistant  | Policy search             | AI Search            | Search Index Data Reader       | That search service             |
+| hr-assistant  | Read attached policy PDFs | Storage              | Storage Blob Data Reader       | The `hr-policies` **container** |
+| finance-agent | Answer generation         | Azure OpenAI account | Cognitive Services OpenAI User | That account                    |
+| finance-agent | Invoice lookup            | Storage              | Storage Blob Data Reader       | The `invoices` container        |
 
 Three rules make this table hold up.
 
@@ -208,7 +216,7 @@ az role assignment list --all \
   --query "[].{role:roleDefinitionName, scope:scope}" -o table
 ```
 
-![Illustration: Role assignments for the HR assistant: three data-plane roles, each scoped to a single resource or container](/images/posts/securing-ai-agents-entra-workload-identities/04-role-assignments.webp)
+!\[Illustration: Role assignments for the HR assistant: three data-plane roles, each scoped to a single resource or container]\(/images/posts/securing-ai-agents-entra-workload-identities/04-role-assignments.webp)
 
 ### When the agent acts for a user
 
@@ -224,10 +232,10 @@ RBAC controls *what* an agent can reach. Conditional Access controls *how and fr
 
 There is an important limitation, and it catches people out: **these policies apply to single-tenant service principals (app registrations), not to managed identities.** That's less bad than it sounds. A managed identity has no credential that can leak, and its tokens are only issued to the Azure compute it's attached to. Conditional Access is protecting against the stolen-secret scenario that managed identities eliminate. In practice:
 
-- **Agents on managed identities:** your controls are the identity's attachment to specific compute, tight RBAC, and the network (private endpoints on the resources the agent calls, so a token is only useful from inside your virtual network).
-- **Agents that must use an app registration** (the last row of the table earlier): put them in a Conditional Access policy that blocks every location except your known egress IPs, and block high service principal risk.
+* **Agents on managed identities:** your controls are the identity's attachment to specific compute, tight RBAC, and the network (private endpoints on the resources the agent calls, so a token is only useful from inside your virtual network).
+* **Agents that must use an app registration** (the last row of the table earlier): put them in a Conditional Access policy that blocks every location except your known egress IPs, and block high service principal risk.
 
-![Illustration: A Conditional Access policy targeting a workload identity, blocking sign-ins from anywhere except the agent's known egress IPs](/images/posts/securing-ai-agents-entra-workload-identities/05-conditional-access.webp)
+!\[Illustration: A Conditional Access policy targeting a workload identity, blocking sign-ins from anywhere except the agent's known egress IPs]\(/images/posts/securing-ai-agents-entra-workload-identities/05-conditional-access.webp)
 
 Treat this policy as a forcing function. If an agent can't move to a managed identity or federation and needs this policy, put that on record as a known exception with an owner and a review date.
 
@@ -249,7 +257,7 @@ AADManagedIdentitySignInLogs
 
 The useful alert is the *new resource* one: an agent requesting a token for a resource it has never asked for before. Agents are predictable in what they call, so a new row in this table is either a deployment you know about or something to investigate.
 
-![Illustration: Agent footprint query: each agent identity and the resources it requested tokens for over the last seven days](/images/posts/securing-ai-agents-entra-workload-identities/06-footprint.webp)
+!\[Illustration: Agent footprint query: each agent identity and the resources it requested tokens for over the last seven days]\(/images/posts/securing-ai-agents-entra-workload-identities/06-footprint.webp)
 
 **2. Data access: what did it read or change?** Turn on resource diagnostic logs for the data stores agents touch: `StorageRead` and `StorageWrite` on blob storage, `AuditEvent` on Key Vault, and request logs on Azure OpenAI and AI Search. These record the caller's object ID, which now maps to exactly one agent.
 
@@ -284,19 +292,18 @@ Don't log full prompts and responses by default. They often contain exactly the 
 
 Microsoft is building agent-specific identity and governance on top of Entra ID: a first-class identity type for agents (Microsoft Entra Agent ID) and a management layer for registering and governing agents across a tenant. Expect a lot of it on stage at Ignite. None of it replaces what's above. Those layers still come down to an Entra identity per agent, scoped access to resources, and sign-in and audit logs. If you've already built per-agent identities with tight RBAC, adopting the new tooling is an inventory exercise. If every agent shares one service principal, it's a migration project.
 
-
 ## Checklist
 
-- One user-assigned managed identity per agent, named and tagged so logs identify the agent.
-- No client secrets: managed identity on Azure, federated credentials everywhere else.
-- Federated credential subjects pinned to a repository *and* a protected environment.
-- A written tool table per agent: tool, resource, role, scope.
-- Data-plane roles only; nothing that can list keys or delete resources.
-- Role assignments scoped to the resource, container, or index. Never the resource group.
-- On-behalf-of flow for tools that act on a user's data; narrowest Graph permissions for the rest.
-- Conditional Access (location + risk) on any agent that still uses an app registration, recorded as an exception.
-- Private endpoints on the data stores agents call.
-- Entra managed identity and service principal sign-in logs in Log Analytics, with a "new resource" alert.
-- Diagnostic logs on every data store an agent touches.
-- An OpenTelemetry span per tool call, joined to the conversation by ID, not full text.
-- A quarterly access review that removes anything unused for ninety days.
+* One user-assigned managed identity per agent, named and tagged so logs identify the agent.
+* No client secrets: managed identity on Azure, federated credentials everywhere else.
+* Federated credential subjects pinned to a repository *and* a protected environment.
+* A written tool table per agent: tool, resource, role, scope.
+* Data-plane roles only; nothing that can list keys or delete resources.
+* Role assignments scoped to the resource, container, or index. Never the resource group.
+* On-behalf-of flow for tools that act on a user's data; narrowest Graph permissions for the rest.
+* Conditional Access (location + risk) on any agent that still uses an app registration, recorded as an exception.
+* Private endpoints on the data stores agents call.
+* Entra managed identity and service principal sign-in logs in Log Analytics, with a "new resource" alert.
+* Diagnostic logs on every data store an agent touches.
+* An OpenTelemetry span per tool call, joined to the conversation by ID, not full text.
+* A quarterly access review that removes anything unused for ninety days.
