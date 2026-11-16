@@ -7,7 +7,6 @@ format: "How-to"
 heroImage: "/images/covers/zero-downtime-deployments-azure.jpg"
 seoTitle: ""
 seoDescription: ""
-ogImage: ""
 featured: true
 draft: false
 ---

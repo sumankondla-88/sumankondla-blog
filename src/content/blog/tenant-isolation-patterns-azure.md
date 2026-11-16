@@ -6,7 +6,6 @@ category: saas
 format: "Opinion"
 seoTitle: ""
 seoDescription: ""
-ogImage: ""
 featured: false
 draft: true
 ---

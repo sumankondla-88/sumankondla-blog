@@ -4,10 +4,8 @@ description: "Give every agent its own identity, scope its permissions to the to
 pubDate: 2026-11-15
 category: security
 format: "How-to"
-heroImage: ""
 seoTitle: "Securing AI agents on Azure: managed identity, workload identity federation, and least-privilege RBAC"
 seoDescription: "A hands-on guide to AI agent identity on Azure: one managed identity per agent, data-plane RBAC scoped to each tool, federated credentials instead of secrets, Conditional Access for workload identities, and the sign-in logs that show what an agent actually did."
-ogImage: ""
 featured: false
 draft: false
 ---

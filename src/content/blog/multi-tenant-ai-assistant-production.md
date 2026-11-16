@@ -6,7 +6,6 @@ category: field
 format: "War story"
 seoTitle: ""
 seoDescription: ""
-ogImage: ""
 featured: false
 draft: true
 ---

@@ -4,10 +4,8 @@ description: "Chunking, hybrid search, semantic ranking, evaluation sets, and th
 pubDate: 2026-10-22
 category: ai
 format: "How-to"
-heroImage: ""
 seoTitle: "Production RAG on Azure AI Search: hybrid search, semantic ranker, and evals"
 seoDescription: "A hands-on guide to building production-grade RAG on Azure AI Search: structure-aware chunking, hybrid + semantic retrieval, an evaluation set you can trust, and the Day-2 operations most tutorials skip."
-ogImage: ""
 featured: false
 draft: true
 ---

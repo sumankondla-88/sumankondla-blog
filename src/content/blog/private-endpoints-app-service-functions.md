@@ -6,7 +6,6 @@ category: network
 format: "How-to"
 seoTitle: ""
 seoDescription: ""
-ogImage: ""
 featured: false
 draft: true
 ---

@@ -6,7 +6,6 @@ category: security
 format: "Checklist"
 seoTitle: ""
 seoDescription: ""
-ogImage: ""
 featured: false
 draft: true
 ---
