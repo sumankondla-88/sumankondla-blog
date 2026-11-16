@@ -286,7 +286,6 @@ Don't log full prompts and responses by default. They often contain exactly the 
 
 Microsoft is building agent-specific identity and governance on top of Entra ID: a first-class identity type for agents (Microsoft Entra Agent ID) and a management layer for registering and governing agents across a tenant. Expect a lot of it on stage at Ignite. None of it replaces what's above. Those layers still come down to an Entra identity per agent, scoped access to resources, and sign-in and audit logs. If you've already built per-agent identities with tight RBAC, adopting the new tooling is an inventory exercise. If every agent shares one service principal, it's a migration project.
 
-<!-- AFTER IGNITE (Nov 21+): replace this paragraph's "expect" wording with what was actually announced and its availability status (preview vs GA), and link Microsoft's announcement. Update updatedDate in the frontmatter. -->
 
 ## Checklist
 
