@@ -2,7 +2,7 @@
 title: "5 things to know before publishing software built with vibe coding"
 description: "AI agents like Claude and ChatGPT can get you to a working app in a weekend. Here are five checks to make before real users, real data, or real money touch it."
 pubDate: 2026-10-18
-heroImage: "/images/covers/5-things-before-publishing-vibe-coded-software.jpg"
+heroImage: /images/covers/5-things-before-publishing-vibe-coded-software/heroImage.jpg
 category: ai
 format: "Checklist"
 seoTitle: "5 Things to Know Before Publishing a Vibe-Coded Product"

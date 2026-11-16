@@ -4,7 +4,7 @@ description: "A practical introduction to Cloudflare: DNS, the reverse proxy, it
 pubDate: 2026-10-07
 category: cloudflare
 format: "How-to"
-heroImage: "/images/covers/Cloudflare Global Network Nexus.png"
+heroImage: /images/covers/what-is-cloudflare-how-it-works/heroImage.png
 seoTitle: "What Is Cloudflare? How It Works, Explained"
 seoDescription: "Learn how Cloudflare connects DNS, reverse proxying, caching, and security when someone visits a website."
 featured: false

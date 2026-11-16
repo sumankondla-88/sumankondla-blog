@@ -4,7 +4,7 @@ description: "Deployment slots, warm-up, approval gates, and feature flags in Az
 pubDate: 2026-10-19
 category: devops
 format: "How-to"
-heroImage: "/images/covers/zero-downtime-deployments-azure.jpg"
+heroImage: /images/covers/zero-downtime-deployments-azure/heroImage.jpg
 seoTitle: ""
 seoDescription: ""
 featured: true

@@ -97,7 +97,13 @@ export default config({
 					defaultValue: true,
 				}),
 				// Kept as .md so existing posts stay put. MDX parsing means no HTML tags or imports in the body.
-				content: fields.mdx({ label: "Content", extension: "md" }),
+				content: fields.mdx({
+					label: "Content",
+					extension: "md",
+					// Body images live in public/images/posts/<slug>/. Without this, Keystatic resolves them to
+					// paths inside src/content/blog/ that don't exist and tries to delete those on save.
+					options: { image: { directory: "public/images/posts", publicPath: "/images/posts/" } },
+				}),
 			},
 		}),
 	},
