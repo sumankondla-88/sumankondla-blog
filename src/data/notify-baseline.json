@@ -1,0 +1,11 @@
+{
+  "_note": "Posts that were live before new-post emails started (2026-11-16). /api/notify never emails these.",
+  "slugs": [
+    "5-things-before-publishing-vibe-coded-software",
+    "securing-ai-agents-entra-workload-identities",
+    "what-is-cloudflare-how-it-works",
+    "what-is-cloudflare-one",
+    "wordpress-multisite-vs-single-site",
+    "zero-downtime-deployments-azure"
+  ]
+}

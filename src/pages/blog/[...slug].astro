@@ -51,7 +51,7 @@ const ogImage = data.ogImage || (publicFileExists(coverPath(post)) ? coverPath(p
 					<h1>{data.title}</h1>
 					<p class="lede">{data.description}</p>
 					<div class="byline">
-						<span class="author">{AUTHOR}</span> · <span>{formatDate(data.pubDate)}</span> · <span>{minutes} min read</span>
+						<span class="author">{AUTHOR}</span> · <span>{formatDate(data.pubDate)}</span> · <span>{minutes} min read</span><span class="views" data-views-slug={post.id} hidden></span>
 					</div>
 					<ShareRow url={url} title={data.title} />
 					<Cover src={coverPath(post)} category={data.category} ratio="16/8" radius={16} eager />
@@ -240,4 +240,33 @@ const ogImage = data.ogImage || (publicFileExists(coverPath(post)) ? coverPath(p
 			(window as any).track?.("copy_code", { slug: document.querySelector<HTMLElement>(".prose")?.dataset.slug });
 		}
 	});
+
+	// View count (see /api/views). One counted view per browser per post per day; later loads just read it.
+	const viewsEl = document.querySelector<HTMLElement>("[data-views-slug]");
+	if (viewsEl) {
+		const slug = viewsEl.dataset.viewsSlug!;
+		const key = `viewed:${slug}`;
+		const today = new Date().toISOString().slice(0, 10);
+		let seen = false;
+		try {
+			seen = localStorage.getItem(key) === today;
+		} catch {}
+		const req = seen
+			? fetch(`/api/views?slug=${encodeURIComponent(slug)}`)
+			: fetch("/api/views", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug }) });
+		req
+			.then((r) => (r.ok ? r.json() : null))
+			.then((out: { views?: number | null } | null) => {
+				if (!seen && out) {
+					try {
+						localStorage.setItem(key, today);
+					} catch {}
+				}
+				if (typeof out?.views === "number" && out.views > 0) {
+					viewsEl.textContent = ` · ${out.views.toLocaleString()} ${out.views === 1 ? "view" : "views"}`;
+					viewsEl.hidden = false;
+				}
+			})
+			.catch(() => {});
+	}
 </script>

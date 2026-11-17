@@ -1,0 +1,43 @@
+# Emails newsletter subscribers about newly published posts (see NEWSLETTER.md).
+# Runs when a post changes on main (after Cloudflare has had time to build) and after the daily publish
+# rebuild. Safe to run repeatedly: the Worker skips any post that already has a Brevo campaign.
+name: Notify subscribers
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/content/blog/**", "src/data/schedule.json"]
+  schedule:
+    - cron: "45 13 * * *" # 13:45 UTC daily, 45 minutes after Daily publish
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only report what would be sent"
+        type: boolean
+        default: true
+
+concurrency:
+  group: notify-subscribers
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for the Cloudflare build
+        if: github.event_name == 'push'
+        run: sleep 420
+      - name: Announce new posts
+        env:
+          NOTIFY_TOKEN: ${{ secrets.NOTIFY_TOKEN }}
+          DRY: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+        run: |
+          if [ -z "$NOTIFY_TOKEN" ]; then
+            echo "NOTIFY_TOKEN secret is not set. See NEWSLETTER.md." >&2
+            exit 1
+          fi
+          curl -sS --fail-with-body -X POST \
+            -H "Authorization: Bearer $NOTIFY_TOKEN" \
+            -H "Content-Type: application/json" -d '{}' \
+            "https://sumankondla.com/api/notify?dry=$DRY"
+          echo

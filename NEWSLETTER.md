@@ -33,3 +33,28 @@ Until `BREVO_API_KEY` and `BREVO_LIST_ID` are set, the form shows "Subscriptions
 - The free plan sends up to 300 emails per day. Every email you send needs an unsubscribe link, which
   Brevo adds to campaigns automatically.
 - To keep your own copy of the list, export contacts from Brevo, or ask for a Cloudflare D1 copy to be added.
+
+## New-post emails (automatic)
+
+When a new post goes live, subscribers get one email about it. The Worker route `src/pages/api/notify.ts`
+reads the deployed `rss.xml` and creates and sends a Brevo campaign named `New post: <slug>` for every post
+that doesn't have one yet. Posts that were already live when this started are listed in
+`src/data/notify-baseline.json` and are never emailed. A post is announced once, whatever its date.
+
+`.github/workflows/notify-subscribers.yml` calls it:
+- after any push to `main` that changes a post (it waits 7 minutes for the Cloudflare build first), and
+- daily at 13:45 UTC, 45 minutes after the Daily publish rebuild.
+
+### One-time setup
+
+1. Make a long random token, for example `openssl rand -hex 32`.
+2. Cloudflare → Workers & Pages → your Worker → Settings → Variables and Secrets → add **Secret**
+   `NOTIFY_TOKEN` with that token.
+3. GitHub → repo → Settings → Secrets and variables → Actions → add repository secret `NOTIFY_TOKEN`
+   with the same token.
+4. Optional: Worker variables `BREVO_SENDER_EMAIL` and `BREVO_SENDER_NAME`. Without them the first
+   active verified sender on your Brevo account is used.
+5. Test: GitHub → Actions → Notify subscribers → Run workflow, with "Only report what would be sent"
+   ticked. The log shows `wouldSend` (posts it would email now) and `skipped` (already emailed).
+
+If a send fails after the campaign was created, it stays in Brevo → Campaigns as a draft: send it from there.
